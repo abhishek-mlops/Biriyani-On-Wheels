@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block title %}Track Order — BOW{% endblock %}{% block content %}
+<div class="page-hero"><h1>Track Your <span>Order</span> 🚚</h1><p>Live order status from kitchen to your door</p></div>
+<section style="padding:2rem 0 5rem"><div class="container">
+  <div class="tracking-layout">
+    <div>
+      <p style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem">Order History</p>
+      <div id="orders-list">
+        <div class="bow-spinner"><div class="spinner"></div><p style="color:var(--muted)">Loading orders...</p></div>
+      </div>
+    </div>
+    <div class="tracker-panel" id="tracker-panel">
+      <div style="text-align:center;padding:3rem 1rem">
+        <div style="font-size:4rem;opacity:0.2;margin-bottom:1rem">📦</div>
+        <h3 style="color:var(--muted);font-size:1rem">Select an order to track</h3>
+        <p style="color:var(--muted);font-size:0.82rem;margin-top:0.3rem">Click any order on the left</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+{% endblock %}{% block extra_js %}<script src="/static/js/tracking.js"></script>{% endblock %}

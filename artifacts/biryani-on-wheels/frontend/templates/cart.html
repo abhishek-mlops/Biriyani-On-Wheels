@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}Cart — BOW{% endblock %}{% block content %}
+<div class="page-hero"><h1>Your <span>Cart</span></h1><p>Review and checkout your order</p></div>
+<section style="padding:2rem 0 5rem"><div class="container">
+  <div class="cart-layout" id="cart-layout" style="display:none">
+    <div id="cart-items"></div>
+    <div class="cart-summary" id="cart-summary">
+      <h3>Order Summary</h3>
+      <div id="sum-rows"></div>
+      <div class="sum-divider"></div>
+      <div class="sum-total"><span>Total</span><span id="sum-total">₹0</span></div>
+      <div class="loyalty-earn" id="loyalty-earn"></div>
+      <a href="/checkout-page" class="btn-saffron w-100 mt-3" style="margin-top:1rem;display:flex" onclick="goTo(event,'/checkout-page')">Proceed to Checkout →</a>
+      <button class="btn-ghost w-100" style="margin-top:0.7rem;width:100%" onclick="goTo({preventDefault:()=>{}},'/menu-page');window.location.href='/menu-page'">Continue Shopping</button>
+    </div>
+  </div>
+  <div class="empty-state" id="empty-cart" style="display:none">
+    <div class="empty-emoji">🛒</div>
+    <h3>Cart is empty</h3><p style="color:var(--muted)">Add some delicious items!</p>
+    <a href="/menu-page" class="btn-saffron mt-3" onclick="goTo(event,'/menu-page')">Browse Menu</a>
+  </div>
+</div></section>
+{% endblock %}{% block extra_js %}<script src="/static/js/cart.js"></script>{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Menu — Biryani on Wheels{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <h1>Our <span>Menu</span></h1>
+  <p>Fresh every evening · Open 5 PM – 12 AM · Manipal Bus Stand</p>
+</div>
+
+<section style="padding:2rem 0 5rem">
+  <div class="container">
+    <div class="closed-banner" id="closed-banner" style="display:none">
+      <span style="font-size:2.5rem">🌙</span>
+      <div>
+        <h3>We're Currently Closed</h3>
+        <p>We open at <strong>5:00 PM</strong> daily (Monday holiday). You can browse the menu and place orders once we open!</p>
+      </div>
+      <div class="countdown" id="countdown"></div>
+    </div>
+
+    <div class="filter-bar" id="filter-bar">
+      <button class="flt-btn active" data-cat="All">🍽️ All</button>
+      <button class="flt-btn" data-cat="Naati Biryani">🍚 Naati Biryani</button>
+      <button class="flt-btn" data-cat="Coastal Delicacy">🌊 Coastal</button>
+      <button class="flt-btn" data-cat="Chicken Fry">🍗 Chicken Fry</button>
+      <button class="flt-btn" data-cat="Fast Food">🍜 Fast Food</button>
+      <button class="flt-btn" data-cat="Egg Items">🥚 Egg Items</button>
+    </div>
+
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="srch" placeholder="Search dishes...">
+    </div>
+
+    <div class="menu-grid" id="menu-grid">
+      <div class="bow-spinner"><div class="spinner"></div><p style="color:var(--muted)">Loading menu...</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="/static/js/menu.js"></script>{% endblock %}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Biryani on Wheels — Manipal{% endblock %}</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="/static/css/main.css" rel="stylesheet">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ═══ LOADING SCREEN ═══ -->
+<div id="loading-screen">
+  <div class="load-bg"></div>
+  <div class="load-truck-track">
+    <div class="food-crumbs">
+      <span style="--i:0">🍚</span><span style="--i:1">🍗</span>
+      <span style="--i:2">🥘</span><span style="--i:3">🌿</span>
+      <span style="--i:4">🍳</span><span style="--i:5">🔥</span>
+    </div>
+    <div class="load-truck" id="load-truck">🚚</div>
+  </div>
+  <div class="load-brand">
+    <img src="/static/images/logo_circle.jpg" alt="BOW Logo" class="load-logo" onerror="this.style.display='none'">
+    <h1 class="load-title">BIRYANI<br>ON WHEELS</h1>
+    <p class="load-sub">Food Truck · Manipal</p>
+    <div class="load-bar-wrap"><div class="load-bar" id="load-bar"></div></div>
+    <span class="load-pct" id="load-pct">0%</span>
+  </div>
+</div>
+
+<!-- ═══ PAGE TRANSITION ═══ -->
+<div id="pg-transition">
+  <div class="transition-truck">🚚</div>
+  <div class="transition-steam">♨️</div>
+</div>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav class="bow-nav" id="bow-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" onclick="goTo(event,'/')">
+      <img src="/static/images/logo_circle.jpg" alt="BOW" onerror="this.style.display='none'">
+      <div class="nav-brand-text">
+        <span class="nav-brand-main">BIRYANI ON WHEELS</span>
+        <span class="nav-brand-sub">Food Truck · Manipal</span>
+      </div>
+    </a>
+    <div class="nav-links d-none d-lg-flex">
+      <a href="/" onclick="goTo(event,'/')">Home</a>
+      <a href="/menu-page" onclick="goTo(event,'/menu-page')">Menu</a>
+      <a href="/menu-page?cat=Naati+Biryani" onclick="goTo(event,'/menu-page?cat=Naati+Biryani')">Biryani</a>
+      <a href="/tracking-page" onclick="goTo(event,'/tracking-page')">My Orders</a>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-status" id="nav-status">
+        <span class="status-pulse"></span><span id="status-txt">Checking...</span>
+      </div>
+      <a href="/cart-page" class="nav-cart" onclick="goTo(event,'/cart-page')">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="cart-bubble" id="nav-cart-count">0</span>
+      </a>
+      <div class="nav-user" id="nav-user">
+        <button class="user-circle" id="user-btn"><i class="fas fa-user"></i></button>
+        <div class="user-drop" id="user-drop">
+          <div class="drop-name" id="drop-name"></div>
+          <a href="/auth-page" id="drop-login" onclick="goTo(event,'/auth-page')">🔐 Login / Sign Up</a>
+          <a href="/tracking-page" onclick="goTo(event,'/tracking-page')">📦 My Orders</a>
+          <button onclick="doLogout()" id="drop-logout" style="display:none">🚪 Logout</button>
+        </div>
+      </div>
+      <button class="nav-hamburger d-lg-none" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="/" onclick="goTo(event,'/')">🏠 Home</a>
+    <a href="/menu-page" onclick="goTo(event,'/menu-page')">🍽️ Menu</a>
+    <a href="/menu-page?cat=Naati+Biryani" onclick="goTo(event,'/menu-page?cat=Naati+Biryani')">🍚 Biryani</a>
+    <a href="/tracking-page" onclick="goTo(event,'/tracking-page')">📦 Orders</a>
+    <a href="/cart-page" onclick="goTo(event,'/cart-page')">🛒 Cart</a>
+  </div>
+</nav>
+
+<!-- ═══ TOAST ═══ -->
+<div class="bow-toast" id="bow-toast">
+  <span class="toast-icon" id="toast-icon">✅</span>
+  <span class="toast-msg" id="toast-msg">Done!</span>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<main>{% block content %}{% endblock %}</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="bow-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="/static/images/logo_circle.jpg" alt="BOW" class="footer-logo" onerror="this.style.display='none'">
+        <h3>Biryani on Wheels</h3>
+        <p>Serving Authentic Flavours on the Move</p>
+        <p class="footer-hours">🕔 Open: 5:00 PM – 12:00 AM<br>📍 Manipal Bus Stand, Tiger Circle</p>
+        <p class="footer-contact">📞 8277289417 / 8197439256 / 7338179591</p>
+      </div>
+      <div class="footer-menu">
+        <h4>Categories</h4>
+        <a href="/menu-page?cat=Coastal+Delicacy">🌊 Coastal Delicacy</a>
+        <a href="/menu-page?cat=Naati+Biryani">🍚 Naati Biryani</a>
+        <a href="/menu-page?cat=Chicken+Fry">🍗 Chicken Fry</a>
+        <a href="/menu-page?cat=Fast+Food">🍜 Fast Food</a>
+        <a href="/menu-page?cat=Egg+Items">🥚 Egg Items</a>
+      </div>
+      <div class="footer-info">
+        <h4>Order Online</h4>
+        <p>🛵 Free delivery above ₹500<br>(within 3km)</p>
+        <p>📱 Also on Zomato & Swiggy</p>
+        <p>📸 @biriyani_on.wheels</p>
+        <div class="footer-delivery-logos">
+          <span class="delivery-badge zomato">ZOMATO</span>
+          <span class="delivery-badge swiggy">SWIGGY</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Biryani on Wheels, Manipal · Takeaway / Dine-in / Delivery · Monday Holiday</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+<script src="/static/js/core.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

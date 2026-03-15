@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% block title %}Checkout — BOW{% endblock %}{% block content %}
+<div class="page-hero"><h1>Checkout <span>🔐</span></h1></div>
+<section style="padding:2rem 0 5rem"><div class="container">
+  <div class="checkout-layout">
+    <div>
+      <div class="checkout-card">
+        <h3>📍 Delivery Address</h3>
+        <textarea id="addr" rows="3" placeholder="Enter your full delivery address..."></textarea>
+      </div>
+      <div class="checkout-card">
+        <h3>💳 Payment Method</h3>
+        <div class="pay-options">
+          <div class="pay-opt"><label><input type="radio" name="pay" value="UPI" checked><div class="pay-card"><span class="pay-icon">📱</span><span>UPI</span></div></label></div>
+          <div class="pay-opt"><label><input type="radio" name="pay" value="Credit/Debit Card"><div class="pay-card"><span class="pay-icon">💳</span><span>Card</span></div></label></div>
+          <div class="pay-opt"><label><input type="radio" name="pay" value="Cash on Delivery"><div class="pay-card"><span class="pay-icon">💵</span><span>Cash</span></div></label></div>
+        </div>
+      </div>
+    </div>
+    <div class="cart-summary" style="top:90px;position:sticky">
+      <h3>Order Summary</h3>
+      <div id="co-items"></div>
+      <div class="sum-divider"></div>
+      <div class="sum-total"><span>Total</span><span id="co-total">₹0</span></div>
+      <button class="btn-saffron w-100" style="margin-top:1rem;width:100%" id="order-btn" onclick="placeOrder()">Place Order 🚀</button>
+    </div>
+  </div>
+</div></section>
+{% endblock %}{% block extra_js %}<script src="/static/js/checkout.js"></script>{% endblock %}

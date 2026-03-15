@@ -1,0 +1,38 @@
+{% extends "base.html" %}{% block title %}Login — Biryani on Wheels{% endblock %}{% block content %}
+<div class="auth-page">
+  <div class="auth-visual">
+    <img src="/static/images/logo_circle.jpg" alt="BOW" class="auth-logo" onerror="this.style.display='none'">
+    <h2>Biryani on Wheels</h2>
+    <p>Food Truck · Manipal Bus Stand<br>Authentic Naati Flavours</p>
+    <div style="margin-top:2rem;display:flex;flex-direction:column;gap:0.6rem;text-align:left;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:16px;padding:1.2rem">
+      <p style="font-size:0.78rem;color:var(--saffron);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem">Why Sign Up?</p>
+      <p style="font-size:0.82rem;color:var(--muted)">⭐ Earn loyalty points on every order</p>
+      <p style="font-size:0.82rem;color:var(--muted)">📦 Track orders in real-time</p>
+      <p style="font-size:0.82rem;color:var(--muted)">🔄 Reorder your favourites instantly</p>
+      <p style="font-size:0.82rem;color:var(--muted)">💾 Save your delivery address</p>
+    </div>
+  </div>
+  <div class="auth-form-wrap">
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</button>
+      <button class="auth-tab" id="tab-reg" onclick="switchTab('reg')">Sign Up</button>
+    </div>
+
+    <div id="login-form">
+      <div class="form-grp"><label>Email</label><input type="email" id="l-email" placeholder="your@email.com"></div>
+      <div class="form-grp"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••"></div>
+      <button class="btn-saffron w-100" style="width:100%" onclick="doLogin()">Login →</button>
+    </div>
+
+    <div id="reg-form" style="display:none">
+      <div class="form-grp"><label>Full Name</label><input type="text" id="r-name" placeholder="Your Name"></div>
+      <div class="form-grp"><label>Email</label><input type="email" id="r-email" placeholder="your@email.com"></div>
+      <div class="form-grp"><label>Phone (optional)</label><input type="tel" id="r-phone" placeholder="+91 98765 43210"></div>
+      <div class="form-grp"><label>Password</label><input type="password" id="r-pass" placeholder="Min 6 characters"></div>
+      <button class="btn-saffron w-100" style="width:100%" onclick="doRegister()">Create Account 🚀</button>
+    </div>
+
+    <div class="auth-error" id="auth-err"></div>
+  </div>
+</div>
+{% endblock %}{% block extra_js %}<script src="/static/js/auth.js"></script>{% endblock %}

@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}Biryani on Wheels — Authentic Naati Biryani, Manipal{% endblock %}
+{% block content %}
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-floaters">
+    <span class="hero-floater" style="--x:8%;--y:20%;--d:0s">🍚</span>
+    <span class="hero-floater" style="--x:85%;--y:15%;--d:0.8s">🍗</span>
+    <span class="hero-floater" style="--x:92%;--y:65%;--d:1.6s">🥘</span>
+    <span class="hero-floater" style="--x:5%;--y:75%;--d:2.4s">🌿</span>
+    <span class="hero-floater" style="--x:50%;--y:88%;--d:0.4s">🔥</span>
+  </div>
+
+  <div class="hero-text">
+    <div class="hero-eyebrow hero-reveal">
+      <span>🚚</span> Food Truck · Manipal Bus Stand
+    </div>
+    <h1 class="hero-h1 hero-reveal">
+      Authentic<br>Naati
+      <em>Biryani</em>
+    </h1>
+    <p class="hero-desc hero-reveal">
+      Slow-cooked seeraga samba rice with farm-fresh naati chicken, served on banana leaf — the way biryani was meant to be eaten. 
+      <strong style="color:var(--text)">Takeaway / Dine-in / Delivery.</strong>
+    </p>
+    <div class="hero-cta hero-reveal">
+      <a href="/menu-page" class="btn-saffron" onclick="goTo(event,'/menu-page')">
+        🍽️ View Full Menu
+      </a>
+      <a href="/menu-page?cat=Naati+Biryani" class="btn-outline" onclick="goTo(event,'/menu-page?cat=Naati+Biryani')">
+        🍚 Order Biryani
+      </a>
+    </div>
+    <div class="hero-hours hero-reveal">
+      <span>🕔</span> Open 5:00 PM – 12:00 AM &nbsp;|&nbsp; Monday Holiday
+    </div>
+    <div class="hero-stats hero-reveal" style="margin-top:2rem">
+      <div class="hstat"><span class="hstat-num">4.8★</span><span class="hstat-label">Rating</span></div>
+      <div class="hero-divider"></div>
+      <div class="hstat"><span class="hstat-num">₹50</span><span class="hstat-label">Starts From</span></div>
+      <div class="hero-divider"></div>
+      <div class="hstat"><span class="hstat-num">25+</span><span class="hstat-label">Menu Items</span></div>
+      <div class="hero-divider"></div>
+      <div class="hstat"><span class="hstat-num">3km</span><span class="hstat-label">Free Delivery</span></div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-img-wrap">
+      <div class="hero-glow-ring"></div>
+      <img src="/static/images/chicken_biryani.jpg" alt="Naati Chicken Donne Biryani" class="hero-main-img f-saffron" onerror="this.src='/static/images/kushka.jpg'">
+      <div class="hero-badge-float top-right">
+        <span class="hbf-icon">🏆</span>
+        <div class="hbf-text">
+          <span class="hbf-main">#1 Best Biryani</span>
+          <span class="hbf-sub">Manipal</span>
+        </div>
+      </div>
+      <div class="hero-badge-float bottom-left">
+        <span class="hbf-icon">🚛</span>
+        <div class="hbf-text">
+          <span class="hbf-main">Free Delivery</span>
+          <span class="hbf-sub">Above ₹500 within 3km</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CATEGORY STRIP ═══ -->
+<div style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1rem 0">
+  <div class="cat-strip">
+    <a href="/menu-page?cat=Naati+Biryani" class="cat-pill" onclick="goTo(event,'/menu-page?cat=Naati+Biryani')">🍚 Naati Biryani</a>
+    <a href="/menu-page?cat=Coastal+Delicacy" class="cat-pill" onclick="goTo(event,'/menu-page?cat=Coastal+Delicacy')">🌊 Coastal Delicacy</a>
+    <a href="/menu-page?cat=Chicken+Fry" class="cat-pill" onclick="goTo(event,'/menu-page?cat=Chicken+Fry')">🍗 Chicken Fry</a>
+    <a href="/menu-page?cat=Fast+Food" class="cat-pill" onclick="goTo(event,'/menu-page?cat=Fast+Food')">🍜 Fast Food</a>
+    <a href="/menu-page?cat=Egg+Items" class="cat-pill" onclick="goTo(event,'/menu-page?cat=Egg+Items')">🥚 Egg Items</a>
+  </div>
+</div>
+
+<!-- ═══ POPULAR DISHES ═══ -->
+<section class="home-sec">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="sec-tag">🔥 Most Ordered Tonight</div>
+      <h2 class="sec-title">Customer <span>Favourites</span></h2>
+      <p class="sec-sub">Dishes our regulars can't stop ordering</p>
+    </div>
+    <div class="menu-grid" id="popular-grid">
+      <div class="bow-spinner"><div class="spinner"></div><p style="color:var(--muted)">Loading favourites...</p></div>
+    </div>
+    <div class="text-center mt-5">
+      <a href="/menu-page" class="btn-outline" onclick="goTo(event,'/menu-page')">
+        View Full Menu →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MENU POSTER ═══ -->
+<section class="poster-section home-sec-alt">
+  <div class="container">
+    <div class="poster-card">
+      <img src="/static/images/menu_poster.jpg" alt="Biryani on Wheels Menu" onerror="this.style.opacity='0.5'">
+      <div class="poster-overlay">
+        <div class="poster-text">
+          <div class="sec-tag" style="margin-bottom:0.8rem">📋 Our Menu</div>
+          <h2>Everything We <span style="color:var(--saffron)">Serve</span></h2>
+          <p>From Coastal Delicacies to Naati Style Biryani — all made fresh every evening.</p>
+          <a href="/menu-page" class="btn-saffron" onclick="goTo(event,'/menu-page')">Order Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="home-sec">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="sec-tag">⚡ Simple & Fast</div>
+      <h2 class="sec-title">How to <span>Order</span></h2>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">🍽️</div>
+        <h3>Browse Menu</h3>
+        <p>Explore Naati Biryanis, Coastal Delicacies, Chicken Fry and more</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">🛒</div>
+        <h3>Add to Cart</h3>
+        <p>Choose Half or Full portions — perfect for solo or group meals</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">💳</div>
+        <h3>Pay Online</h3>
+        <p>UPI, Card, or Cash on Delivery — all accepted</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <div class="step-icon">🚚</div>
+        <h3>Track & Enjoy</h3>
+        <p>Live tracking from kitchen to your doorstep. Free delivery above ₹500</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LOYALTY ═══ -->
+<section class="home-sec home-sec-alt">
+  <div class="container">
+    <div class="loyalty-banner">
+      <div class="lb-icon">⭐</div>
+      <div class="lb-text">
+        <h3>Earn Loyalty Points</h3>
+        <p>Get 1 point for every ₹10 spent. Redeem on your next order!</p>
+      </div>
+      <div class="lb-cta">
+        <a href="/auth-page" class="btn-saffron" onclick="goTo(event,'/auth-page')">Join Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+{% block extra_js %}<script src="/static/js/home.js"></script>{% endblock %}

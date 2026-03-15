@@ -1,0 +1,120 @@
+{% extends "base.html" %}{% block title %}Admin — Biryani on Wheels{% endblock %}{% block content %}
+<div class="admin-page">
+
+  <!-- LOGIN -->
+  <div class="admin-login-wrap" id="admin-login-wrap">
+    <div class="admin-login-box">
+      <img src="/static/images/logo_circle.jpg" alt="BOW" class="logo-img" onerror="this.style.display='none'">
+      <h2>Admin Panel</h2>
+      <div class="form-grp"><input type="text" id="a-user" placeholder="Username"></div>
+      <div class="form-grp"><input type="password" id="a-pass" placeholder="Password"></div>
+      <button class="btn-saffron w-100" style="width:100%" onclick="adminLogin()">Login</button>
+      <div class="admin-hint">Default: admin / admin123</div>
+      <div class="auth-error" id="a-err"></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="admin-wrap" id="admin-wrap" style="display:none">
+    <div class="admin-side">
+      <div class="admin-side-brand">
+        <img src="/static/images/logo_circle.jpg" onerror="this.style.display='none'">
+        <h3>BOW Admin</h3>
+        <p>Biryani on Wheels</p>
+      </div>
+      <nav class="admin-nav">
+        <button class="anav-btn active" onclick="showTab('overview')">📊 Overview</button>
+        <button class="anav-btn" onclick="showTab('orders')">📦 Orders</button>
+        <button class="anav-btn" onclick="showTab('menu')">🍽️ Menu</button>
+        <button class="anav-btn" onclick="showTab('analytics')">📈 Analytics</button>
+      </nav>
+      <button class="admin-logout" onclick="adminLogout()">Logout</button>
+    </div>
+
+    <div class="admin-main">
+      <!-- OVERVIEW -->
+      <div class="atab" id="atab-overview">
+        <h2 class="admin-tab-title">Overview</h2>
+        <div class="admin-stats" id="a-stats"></div>
+        <h3 style="font-size:1rem;margin-bottom:1rem;color:var(--muted)">Popular Dishes</h3>
+        <div id="a-popular" style="margin-bottom:2rem"></div>
+        <h3 style="font-size:1rem;margin-bottom:1rem;color:var(--muted)">Recent Orders</h3>
+        <div id="a-recent"></div>
+      </div>
+
+      <!-- ORDERS -->
+      <div class="atab" id="atab-orders" style="display:none">
+        <h2 class="admin-tab-title">All Orders</h2>
+        <div style="margin-bottom:1.5rem">
+          <select class="status-sel" onchange="loadOrders()" id="ord-filter">
+            <option value="all">All Status</option>
+            <option>Order Received</option><option>Preparing</option>
+            <option>Ready</option><option>Out for Delivery</option><option>Delivered</option>
+          </select>
+        </div>
+        <div id="a-orders"></div>
+      </div>
+
+      <!-- MENU -->
+      <div class="atab" id="atab-menu" style="display:none">
+        <h2 class="admin-tab-title">Menu Management</h2>
+        <button class="btn-saffron" style="margin-bottom:1.5rem" onclick="openModal()">+ Add Item</button>
+        <div id="a-menu"></div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="atab" id="atab-analytics" style="display:none">
+        <h2 class="admin-tab-title">Analytics</h2>
+        <div id="a-analytics"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ITEM MODAL -->
+<div class="modal-bg" id="item-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3 id="modal-title">Add Menu Item</h3>
+      <button onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="m-id">
+      <div class="form-grp"><label>Name</label><input type="text" id="m-name"></div>
+      <div class="form-grp"><label>Category</label>
+        <select id="m-cat" style="width:100%;padding:0.8rem 1rem;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:12px;font-family:inherit;outline:none">
+          <option>Coastal Delicacy</option><option>Naati Biryani</option>
+          <option>Chicken Fry</option><option>Fast Food</option><option>Egg Items</option>
+        </select>
+      </div>
+      <div class="form-grp"><label>Description</label><textarea id="m-desc" rows="2" style="width:100%;padding:0.8rem;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:12px;resize:none;font-family:inherit;outline:none"></textarea></div>
+      <div class="form-row-2">
+        <div class="form-grp"><label>Price Half (₹)</label><input type="number" id="m-phalf" placeholder="Leave blank if N/A"></div>
+        <div class="form-grp"><label>Price Full (₹)</label><input type="number" id="m-pfull"></div>
+      </div>
+      <div class="form-grp"><label>Image URL</label><input type="text" id="m-img" placeholder="/static/images/..."></div>
+      <div class="form-grp"><label>Filter Type</label>
+        <select id="m-filter" style="width:100%;padding:0.8rem 1rem;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:12px;font-family:inherit;outline:none">
+          <option value="none">None</option>
+          <option value="flame">🔥 Flame</option><option value="saffron">🟡 Saffron</option>
+          <option value="smoky">💨 Smoky</option><option value="crispy">✨ Crispy</option>
+          <option value="golden">🌟 Golden</option><option value="pearl">🤍 Pearl</option>
+          <option value="turmeric">🟠 Turmeric</option><option value="royal">👑 Royal</option>
+          <option value="steam">♨️ Steam</option><option value="wok">🥘 Wok</option>
+          <option value="fresh">🌿 Fresh</option>
+        </select>
+      </div>
+      <div class="form-grp"><label>Badge Text</label><input type="text" id="m-badge" placeholder="e.g. 🔥 Bestseller"></div>
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:0.5rem">
+        <label class="chk-label"><input type="checkbox" id="m-pop"> Popular</label>
+        <label class="chk-label"><input type="checkbox" id="m-chef"> Chef Special</label>
+        <label class="chk-label"><input type="checkbox" id="m-avail" checked> Available</label>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-saffron" onclick="saveItem()">Save Item</button>
+    </div>
+  </div>
+</div>
+{% endblock %}{% block extra_js %}<script src="/static/js/admin.js"></script>{% endblock %}
