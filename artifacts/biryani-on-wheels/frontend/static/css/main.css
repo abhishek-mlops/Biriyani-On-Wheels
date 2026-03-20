@@ -104,25 +104,66 @@ body {
 
 /* ═══ PAGE TRANSITION ═══ */
 #pg-transition {
-  position: fixed; top: 0; left: -100vw;
-  width: 100vw; height: 4px;
-  background: linear-gradient(90deg, var(--spice), var(--saffron));
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(12, 12, 12, 0.85);
   z-index: 8888; pointer-events: none;
 }
-#pg-transition.active { animation: page-sweep 0.7s ease forwards; }
-@keyframes page-sweep {
-  0%   { left: -100vw; height: 100vh; opacity: 0.95; }
-  30%  { left: 0; }
-  70%  { left: 0; }
-  100% { left: 100vw; }
+#pg-transition.active { 
+  display: flex; 
+  animation: fade-in 0.3s ease forwards;
 }
-.transition-truck, .transition-steam {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  font-size: 4rem; opacity: 0;
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
-#pg-transition.active .transition-truck { animation: truck-fly 0.7s ease forwards; left: 40%; }
-#pg-transition.active .transition-steam { animation: truck-fly 0.7s ease 0.05s forwards; left: 30%; font-size: 2rem; }
-@keyframes truck-fly { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+.spinner-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-bar {
+  position: absolute;
+  width: 6px;
+  height: 24px;
+  background: var(--saffron);
+  border-radius: 3px;
+  transform-origin: center 60px;
+  transform: rotate(calc(var(--i) * 45deg));
+  animation: spinner-pulse 1.2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.1s);
+  left: 50%;
+  top: 50%;
+  margin-left: -3px;
+  margin-top: -60px;
+  opacity: 0.4;
+}
+
+.spinner-bar:nth-child(1) { opacity: 0.45; }
+.spinner-bar:nth-child(2) { opacity: 0.55; }
+.spinner-bar:nth-child(3) { opacity: 0.65; }
+.spinner-bar:nth-child(4) { opacity: 0.75; }
+.spinner-bar:nth-child(5) { opacity: 0.85; }
+.spinner-bar:nth-child(6) { opacity: 0.95; }
+.spinner-bar:nth-child(7) { opacity: 1; }
+.spinner-bar:nth-child(8) { opacity: 0.9; }
+
+@keyframes spinner-pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.spinner-truck {
+  position: absolute;
+  font-size: 3rem;
+  z-index: 10;
+}
 
 /* ═══ NAVBAR ═══ */
 .bow-nav {
