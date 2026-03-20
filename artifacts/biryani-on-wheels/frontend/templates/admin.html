@@ -2,7 +2,7 @@
 <div class="admin-page">
 
   <!-- LOGIN -->
-  <div class="admin-login-wrap" id="admin-login-wrap">
+  <div class="admin-login-wrap" id="admin-login-wrap" style="background: linear-gradient(135deg, rgba(245,166,35,0.08) 0%, rgba(12,12,12,0.7) 100%), url('/static/images/admin_bg.webp') center/cover no-repeat fixed;">
     <div class="admin-login-box">
       <img src="/static/images/logo_circle.jpg" alt="BOW" class="logo-img" onerror="this.style.display='none'">
       <h2>Admin Panel</h2>
@@ -26,6 +26,8 @@
         <button class="anav-btn active" onclick="showTab('overview')">📊 Overview</button>
         <button class="anav-btn" onclick="showTab('orders')">📦 Orders</button>
         <button class="anav-btn" onclick="showTab('menu')">🍽️ Menu</button>
+        <button class="anav-btn" onclick="showTab('offers')">🎁 Offers</button>
+        <button class="anav-btn" onclick="showTab('templates')">📧 Templates</button>
         <button class="anav-btn" onclick="showTab('analytics')">📈 Analytics</button>
       </nav>
       <button class="admin-logout" onclick="adminLogout()">Logout</button>
@@ -66,6 +68,24 @@
       <div class="atab" id="atab-analytics" style="display:none">
         <h2 class="admin-tab-title">Analytics</h2>
         <div id="a-analytics"></div>
+      </div>
+
+      <!-- OFFERS -->
+      <div class="atab" id="atab-offers" style="display:none">
+        <h2 class="admin-tab-title">Offers & Promotions</h2>
+        <button class="btn-saffron" style="margin-bottom:1.5rem" onclick="openOfferModal()">+ Create Offer</button>
+        <div style="padding:2rem;text-align:center;color:var(--muted)">
+          <p>🎁 Offer management coming soon...</p>
+        </div>
+      </div>
+
+      <!-- TEMPLATES -->
+      <div class="atab" id="atab-templates" style="display:none">
+        <h2 class="admin-tab-title">Email Templates</h2>
+        <button class="btn-saffron" style="margin-bottom:1.5rem" onclick="openTemplateModal()">+ New Template</button>
+        <div style="padding:2rem;text-align:center;color:var(--muted)">
+          <p>📧 Email template management coming soon...</p>
+        </div>
       </div>
     </div>
   </div>

@@ -185,4 +185,25 @@ async function loadAnalytics() {
   } catch(e){}
 }
 
+function openOfferModal() {
+  alert('Offer management feature coming soon!');
+}
+window.openOfferModal = openOfferModal;
+
+function openTemplateModal() {
+  alert('Email template management feature coming soon!');
+}
+window.openTemplateModal = openTemplateModal;
+
+function statusClass(status) {
+  const map = {
+    'Order Received': 'status-received',
+    'Preparing': 'status-preparing',
+    'Ready': 'status-ready',
+    'Out for Delivery': 'status-delivery',
+    'Delivered': 'status-delivered'
+  };
+  return map[status] || 'status-default';
+}
+
 document.addEventListener('keydown',e=>{ if(e.key==='Enter' && document.getElementById('admin-login-wrap')?.style.display!=='none') adminLogin(); });
