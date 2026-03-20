@@ -28,7 +28,7 @@ async function placeOrder() {
       body: JSON.stringify({ delivery_address: addr, payment_method: pay }) });
     const d = await r.json();
     if (d.success) {
-      toast(`Order #${d.order_id} placed! +${d.points_earned} points 🎉`, '🎉', 5000);
+      toast(`Order #${d.order_id} placed! 🎉`, '🎉', 5000);
       setTimeout(() => window.location.href = '/tracking-page', 2000);
     } else {
       toast(d.error || 'Failed to place order', '❌');

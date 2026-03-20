@@ -46,11 +46,9 @@ async function loadCart() {
     // Summary
     const sumRows = document.getElementById('sum-rows');
     const sumTotal = document.getElementById('sum-total');
-    const loyalEl = document.getElementById('loyalty-earn');
     if(sumRows) sumRows.innerHTML = d.items.map(i => `
       <div class="sum-row"><span>${i.name} (${i.size}) × ${i.quantity}</span><span>${fmtPrice(i.subtotal)}</span></div>`).join('');
     if(sumTotal) sumTotal.textContent = fmtPrice(d.total);
-    if(loyalEl) loyalEl.textContent = `⭐ You'll earn ${Math.floor(d.total/10)} loyalty points`;
   } catch(e) {
     if(itemsEl) itemsEl.innerHTML = '<p style="color:var(--muted);padding:2rem">Error loading cart</p>';
   }

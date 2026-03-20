@@ -654,16 +654,6 @@ body {
 .step-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
 .step-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
 
-/* Loyalty banner */
-.loyalty-banner {
-  background: linear-gradient(135deg, rgba(212,172,13,0.1) 0%, rgba(245,166,35,0.05) 100%);
-  border: 1px solid rgba(212,172,13,0.2); border-radius: 20px; padding: 2rem 2.5rem;
-  display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
-}
-.loyalty-banner .lb-icon { font-size: 3.5rem; }
-.lb-text h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.3rem; }
-.lb-text p { color: var(--muted); font-size: 0.88rem; }
-.lb-cta { margin-left: auto; }
 
 /* ═══ CLOSED BANNER ═══ */
 .closed-banner {
@@ -734,7 +724,6 @@ body {
 .sum-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.7rem; }
 .sum-divider { height: 1px; background: var(--border); margin: 1rem 0; }
 .sum-total { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.05rem; }
-.loyalty-earn { text-align: center; font-size: 0.75rem; color: var(--turmeric); margin-top: 0.8rem; }
 .empty-state { text-align: center; padding: 5rem 2rem; }
 .empty-emoji { font-size: 5rem; opacity: 0.2; margin-bottom: 1rem; }
 
