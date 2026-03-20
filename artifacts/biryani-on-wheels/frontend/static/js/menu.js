@@ -33,15 +33,15 @@ function buildCard(item) {
   const addSection = item.price_half && item.price_full
     ? `<div style="display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end">
         <div class="size-btns">
-          <button class="size-btn active" data-size="half" onclick="selectSize(this,${item.item_id})">H</button>
-          <button class="size-btn" data-size="full" onclick="selectSize(this,${item.item_id})">F</button>
+          <button class="size-btn active" data-size="half" onclick="selectSize(this,${item.item_id})" data-price-half="${item.price_half}" data-price-full="${item.price_full}">H</button>
+          <button class="size-btn" data-size="full" onclick="selectSize(this,${item.item_id})" data-price-half="${item.price_half}" data-price-full="${item.price_full}">F</button>
         </div>
         <button class="add-btn" id="addbtn-${item.item_id}" onclick="addToCart(${item.item_id},'${item.name.replace(/'/g,"\\'")}')">+ Cart</button>
       </div>`
     : `<button class="add-btn" id="addbtn-${item.item_id}" onclick="addToCart(${item.item_id},'${item.name.replace(/'/g,"\\'")}')">+ Cart</button>`;
 
   return `
-    <div class="dish-card ${popularClass}" id="card-${item.item_id}">
+    <div class="dish-card ${popularClass}" id="card-${item.item_id}" data-item-id="${item.item_id}" data-price-half="${item.price_half || 0}" data-price-full="${item.price_full || 0}">
       <div class="card-img">
         <img src="${imgSrc}" alt="${item.name}" class="${fc}" id="img-${item.item_id}"
              onerror="this.src='/static/images/kushka.jpg'">
@@ -53,7 +53,9 @@ function buildCard(item) {
         <div class="card-name">${item.name}</div>
         <div class="card-desc">${item.description || ''}</div>
         <div class="card-footer">
-          ${priceHtml}
+          <div class="card-price" id="price-${item.item_id}">
+            ${item.price_half && item.price_full ? `<span class="price-half">Half: ${fmtPrice(item.price_half)}</span>` : `<span class="price-only">${fmtPrice(item.price_full || item.price_half)}</span>`}
+          </div>
           ${addSection}
         </div>
       </div>
@@ -155,6 +157,20 @@ function selectSize(btn, itemId) {
   parent.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedSizes[itemId] = btn.dataset.size;
+  
+  // Update price display
+  const priceEl = document.getElementById(`price-${itemId}`);
+  if (priceEl) {
+    const size = btn.dataset.size;
+    const priceHalf = parseFloat(btn.dataset.priceHalf) || 0;
+    const priceFull = parseFloat(btn.dataset.priceFull) || 0;
+    
+    if (size === 'half') {
+      priceEl.innerHTML = `<span class="price-half">Half: ${fmtPrice(priceHalf)}</span>`;
+    } else {
+      priceEl.innerHTML = `<span class="price-full">${fmtPrice(priceFull)}</span>`;
+    }
+  }
 }
 
 async function addToCart(itemId, itemName) {
