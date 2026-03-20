@@ -486,7 +486,7 @@ body {
 .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .card-price { display: flex; flex-direction: column; gap: 0.1rem; }
 .price-full  { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; color: var(--saffron); letter-spacing: 2px; line-height: 1; }
-.price-half  { font-size: 0.72rem; color: var(--muted); }
+.price-half  { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--saffron); letter-spacing: 1px; line-height: 1; }
 .price-only  { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; color: var(--saffron); letter-spacing: 2px; }
 .size-btns   { display: flex; gap: 0.4rem; align-items: center; }
 .size-btn {
