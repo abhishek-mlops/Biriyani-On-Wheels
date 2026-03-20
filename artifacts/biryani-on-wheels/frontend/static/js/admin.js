@@ -3,22 +3,26 @@ async function adminLogin() {
   const user = document.getElementById('a-user').value;
   const pass = document.getElementById('a-pass').value;
   const err  = document.getElementById('a-err');
+  if(!user || !pass) { err.textContent='Please enter credentials'; return; }
   try {
-    const r = await fetch('/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:user,password:pass})});
+    const r = await fetch('/admin/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:user,password:pass})});
     const d = await r.json();
     if(d.success){
       document.getElementById('admin-login-wrap').style.display='none';
       document.getElementById('admin-wrap').style.display='grid';
+      err.textContent='';
       loadOverview();
     } else err.textContent = d.error||'Invalid credentials';
-  } catch(e){ err.textContent='Login failed'; }
+  } catch(e){ err.textContent='Login failed: '+e.message; console.error(e); }
 }
 window.adminLogin = adminLogin;
 
 async function adminLogout() {
-  await fetch('/admin/logout',{method:'POST'});
+  await fetch('/admin/logout',{method:'POST',credentials:'include'});
   document.getElementById('admin-login-wrap').style.display='flex';
   document.getElementById('admin-wrap').style.display='none';
+  document.getElementById('a-user').value='';
+  document.getElementById('a-pass').value='';
 }
 window.adminLogout = adminLogout;
 
@@ -35,7 +39,7 @@ window.showTab = showTab;
 
 async function loadOverview() {
   try {
-    const r = await fetch('/admin/dashboard');
+    const r = await fetch('/admin/dashboard',{credentials:'include'});
     const d = await r.json();
     document.getElementById('a-stats').innerHTML = `
       <div class="astat-card"><div class="astat-icon">📦</div><div class="astat-val">${d.total_orders}</div><div class="astat-name">Total Orders</div></div>
@@ -55,7 +59,7 @@ async function loadOverview() {
 async function loadOrders() {
   const el = document.getElementById('a-orders'); if(!el) return;
   try {
-    const r = await fetch('/admin/orders');
+    const r = await fetch('/admin/orders',{credentials:'include'});
     const orders = await r.json();
     const flt = document.getElementById('ord-filter')?.value||'all';
     const filtered = flt==='all' ? orders : orders.filter(o=>o.order_status===flt);
@@ -75,7 +79,7 @@ async function loadOrders() {
 
 async function updateStatus(orderId, status) {
   if(!status) return;
-  await fetch('/admin/order-status',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({order_id:orderId,status})});
+  await fetch('/admin/order-status',{method:'PUT',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({order_id:orderId,status})});
   toast(`Order #${orderId} → "${status}"`, '✅');
   loadOrders();
 }
@@ -84,7 +88,7 @@ window.updateStatus = updateStatus;
 async function loadMenu() {
   const el = document.getElementById('a-menu'); if(!el) return;
   try {
-    const r = await fetch('/menu');
+    const r = await fetch('/menu',{credentials:'include'});
     const items = await r.json();
     el.innerHTML = `<table class="admin-table"><thead><tr><th>Name</th><th>Category</th><th>Half</th><th>Full</th><th>Filter</th><th>Tags</th><th>Actions</th></tr></thead>
       <tbody>${items.map(i=>`<tr>
@@ -153,7 +157,7 @@ async function saveItem() {
   if(id) body.item_id = parseInt(id);
   const url = id ? '/admin/edit-menu-item' : '/admin/add-menu-item';
   const method = id ? 'PUT' : 'POST';
-  const r = await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const r = await fetch(url,{method,credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   const d = await r.json();
   if(d.success){ toast('Item saved!','✅'); closeModal(); loadMenu(); }
 }
@@ -161,7 +165,7 @@ window.saveItem = saveItem;
 
 async function delItem(id) {
   if(!confirm('Delete this item?')) return;
-  await fetch(`/admin/delete-menu-item?item_id=${id}`,{method:'DELETE'});
+  await fetch(`/admin/delete-menu-item?item_id=${id}`,{method:'DELETE',credentials:'include'});
   toast('Deleted','🗑️'); loadMenu();
 }
 window.delItem = delItem;
@@ -169,7 +173,7 @@ window.delItem = delItem;
 async function loadAnalytics() {
   const el = document.getElementById('a-analytics'); if(!el) return;
   try {
-    const r = await fetch('/admin/analytics');
+    const r = await fetch('/admin/analytics',{credentials:'include'});
     const d = await r.json();
     el.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
       <div>
