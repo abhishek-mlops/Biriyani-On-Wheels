@@ -1,28 +1,7 @@
 /* ═══ ADMIN JS ═══ */
-async function adminLogin() {
-  const user = document.getElementById('a-user').value;
-  const pass = document.getElementById('a-pass').value;
-  const err  = document.getElementById('a-err');
-  if(!user || !pass) { err.textContent='Please enter credentials'; return; }
-  try {
-    const r = await fetch('/admin/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:user,password:pass})});
-    const d = await r.json();
-    if(d.success){
-      document.getElementById('admin-login-wrap').style.display='none';
-      document.getElementById('admin-wrap').style.display='grid';
-      err.textContent='';
-      loadOverview();
-    } else err.textContent = d.error||'Invalid credentials';
-  } catch(e){ err.textContent='Login failed: '+e.message; console.error(e); }
-}
-window.adminLogin = adminLogin;
-
 async function adminLogout() {
   await fetch('/admin/logout',{method:'POST',credentials:'include'});
-  document.getElementById('admin-login-wrap').style.display='flex';
-  document.getElementById('admin-wrap').style.display='none';
-  document.getElementById('a-user').value='';
-  document.getElementById('a-pass').value='';
+  window.location.href = '/auth-page';
 }
 window.adminLogout = adminLogout;
 
@@ -32,7 +11,9 @@ function showTab(tab) {
   document.getElementById(`atab-${tab}`).style.display='block';
   document.querySelector(`[onclick="showTab('${tab}')"]`).classList.add('active');
   if(tab==='orders') loadOrders();
+  if(tab==='payments') { loadPaymentSettings(); loadPaymentNotifications(); }
   if(tab==='menu') loadMenu();
+  if(tab==='poster') loadPosterPreview();
   if(tab==='analytics') loadAnalytics();
 }
 window.showTab = showTab;
@@ -170,6 +151,64 @@ async function delItem(id) {
 }
 window.delItem = delItem;
 
+async function loadPaymentSettings() {
+  try {
+    const r = await fetch('/admin/payment-settings', { credentials: 'include' });
+    const d = await r.json();
+    document.getElementById('p-upi').value = d.upi_id || '';
+    document.getElementById('p-bank').value = d.bank_name || '';
+    document.getElementById('p-holder').value = d.account_holder || '';
+    document.getElementById('p-account').value = d.account_number || '';
+    document.getElementById('p-ifsc').value = d.ifsc_code || '';
+  } catch (e) {}
+}
+
+async function savePaymentSettings() {
+  const body = {
+    upi_id: document.getElementById('p-upi').value.trim(),
+    bank_name: document.getElementById('p-bank').value.trim(),
+    account_holder: document.getElementById('p-holder').value.trim(),
+    account_number: document.getElementById('p-account').value.trim(),
+    ifsc_code: document.getElementById('p-ifsc').value.trim()
+  };
+  const r = await fetch('/admin/payment-settings', {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const d = await r.json();
+  if (d.success) toast('Payment settings saved', '✅');
+}
+window.savePaymentSettings = savePaymentSettings;
+
+async function loadPaymentNotifications() {
+  const el = document.getElementById('payment-notifications');
+  if (!el) return;
+  try {
+    const r = await fetch('/admin/payment-notifications', { credentials: 'include' });
+    const rows = await r.json();
+    if (!rows.length) {
+      el.innerHTML = '<p style="color:var(--muted)">No payment notifications yet.</p>';
+      return;
+    }
+    el.innerHTML = rows.map(n => `
+      <div style="border:1px solid ${n.is_read ? 'var(--border)' : 'rgba(245,166,35,0.45)'};border-radius:10px;padding:0.75rem;margin-bottom:0.7rem;background:${n.is_read ? 'transparent' : 'rgba(245,166,35,0.08)'}">
+        <div style="display:flex;justify-content:space-between;gap:0.8rem">
+          <strong>${n.title}</strong>
+          <span style="font-size:0.75rem;color:var(--muted)">${n.created_at || ''}</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--muted);margin-top:0.35rem">${n.message}</div>
+      </div>`).join('');
+  } catch (e) {}
+}
+
+async function markNotificationsRead() {
+  await fetch('/admin/payment-notifications/read', { method: 'PUT', credentials: 'include' });
+  loadPaymentNotifications();
+}
+window.markNotificationsRead = markNotificationsRead;
+
 async function loadAnalytics() {
   const el = document.getElementById('a-analytics'); if(!el) return;
   try {
@@ -194,10 +233,96 @@ function openOfferModal() {
 }
 window.openOfferModal = openOfferModal;
 
-function openTemplateModal() {
-  alert('Email template management feature coming soon!');
+let posterState = {
+  template_name: 'classic',
+  heading: 'Everything We Serve',
+  subheading: 'From Coastal Delicacies to Naati Style Biryani — all made fresh every evening.',
+  cta_text: 'Order Now',
+  sticker: 'none',
+  image_url: '/static/images/menu_poster.jpg'
+};
+
+function switchPosterTool(tool) {
+  document.querySelectorAll('.poster-tool').forEach(el => el.style.display = 'none');
+  const target = document.getElementById(`poster-tool-${tool}`);
+  if (target) target.style.display = 'block';
 }
-window.openTemplateModal = openTemplateModal;
+window.switchPosterTool = switchPosterTool;
+
+async function loadPosterPreview() {
+  const el = document.getElementById('poster-preview');
+  if (!el) return;
+  try {
+    const r = await fetch('/admin/poster-settings', { credentials: 'include' });
+    const d = await r.json();
+    posterState = d;
+    el.innerHTML = `<div><strong>${d.heading}</strong></div><div style="font-size:0.85rem">${d.subheading}</div>
+      <div style="margin-top:0.5rem">Template: ${d.template_name} | Sticker: ${d.sticker || 'none'}</div>`;
+  } catch (e) {
+    el.textContent = 'Could not load poster preview.';
+  }
+}
+
+async function openPosterEditor() {
+  try {
+    const r = await fetch('/admin/poster-settings', { credentials: 'include' });
+    posterState = await r.json();
+  } catch (e) {}
+  document.getElementById('poster-template').value = posterState.template_name || 'classic';
+  document.getElementById('poster-sticker').value = posterState.sticker || 'none';
+  document.getElementById('poster-image-url').value = posterState.image_url || '/static/images/menu_poster.jpg';
+  document.getElementById('poster-heading').value = posterState.heading || '';
+  document.getElementById('poster-subheading').value = posterState.subheading || '';
+  document.getElementById('poster-cta').value = posterState.cta_text || 'Order Now';
+  document.getElementById('poster-editor-modal').style.display = 'flex';
+  switchPosterTool('templates');
+}
+window.openPosterEditor = openPosterEditor;
+
+function closePosterEditor() {
+  document.getElementById('poster-editor-modal').style.display = 'none';
+}
+window.closePosterEditor = closePosterEditor;
+
+function gatherPosterForm() {
+  return {
+    template_name: document.getElementById('poster-template').value,
+    sticker: document.getElementById('poster-sticker').value,
+    image_url: document.getElementById('poster-image-url').value.trim() || '/static/images/menu_poster.jpg',
+    heading: document.getElementById('poster-heading').value.trim(),
+    subheading: document.getElementById('poster-subheading').value.trim(),
+    cta_text: document.getElementById('poster-cta').value.trim() || 'Order Now'
+  };
+}
+
+function downloadPosterSettings() {
+  const blob = new Blob([JSON.stringify(gatherPosterForm(), null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'poster-settings.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+window.downloadPosterSettings = downloadPosterSettings;
+
+async function postPosterSettings() {
+  const body = gatherPosterForm();
+  const r = await fetch('/admin/poster-settings', {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const d = await r.json();
+  if (d.success) {
+    toast('Poster posted to interface', '✅');
+    closePosterEditor();
+    loadPosterPreview();
+    window.open('/', '_blank');
+  }
+}
+window.postPosterSettings = postPosterSettings;
 
 function statusClass(status) {
   const map = {
@@ -210,4 +335,4 @@ function statusClass(status) {
   return map[status] || 'status-default';
 }
 
-document.addEventListener('keydown',e=>{ if(e.key==='Enter' && document.getElementById('admin-login-wrap')?.style.display!=='none') adminLogin(); });
+document.addEventListener('DOMContentLoaded', loadOverview);

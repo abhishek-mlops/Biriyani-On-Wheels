@@ -150,5 +150,36 @@ async function updateHeroStatus() {
   } catch(e) {}
 }
 
+async function loadPosterSettings() {
+  try {
+    const r = await fetch('/poster-settings');
+    if (!r.ok) return;
+    const d = await r.json();
+    const card = document.getElementById('home-poster-card');
+    const img = document.getElementById('home-poster-image');
+    const heading = document.getElementById('home-poster-heading');
+    const sub = document.getElementById('home-poster-subheading');
+    const cta = document.getElementById('home-poster-cta');
+    const tag = document.getElementById('home-poster-tag');
+    if (img && d.image_url) img.src = d.image_url;
+    if (heading && d.heading) heading.innerHTML = d.heading;
+    if (sub && d.subheading) sub.textContent = d.subheading;
+    if (cta && d.cta_text) cta.textContent = d.cta_text;
+    if (tag && d.sticker && d.sticker !== 'none') tag.textContent = `${d.sticker} Our Menu`;
+    if (card) {
+      card.style.boxShadow = '';
+      img.style.filter = '';
+      if (d.template_name === 'dark') {
+        card.style.boxShadow = '0 18px 50px rgba(0,0,0,0.45)';
+        img.style.filter = 'brightness(0.72) contrast(1.05)';
+      } else if (d.template_name === 'spicy') {
+        card.style.boxShadow = '0 18px 50px rgba(192,57,43,0.42)';
+        img.style.filter = 'saturate(1.35) contrast(1.1)';
+      }
+    }
+  } catch (e) {}
+}
+
 loadPopular();
 updateHeroStatus();
+loadPosterSettings();

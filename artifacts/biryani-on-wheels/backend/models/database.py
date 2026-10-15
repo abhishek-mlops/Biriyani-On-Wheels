@@ -52,13 +52,56 @@ def init_db(app):
             admin_id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS payment_settings (
+            setting_id INTEGER PRIMARY KEY CHECK (setting_id = 1),
+            upi_id TEXT DEFAULT '',
+            bank_name TEXT DEFAULT '',
+            account_holder TEXT DEFAULT '',
+            account_number TEXT DEFAULT '',
+            ifsc_code TEXT DEFAULT '',
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS admin_notifications (
+            notification_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            message TEXT NOT NULL,
+            order_id INTEGER,
+            amount REAL,
+            payment_method TEXT,
+            is_read INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS poster_settings (
+            setting_id INTEGER PRIMARY KEY CHECK (setting_id = 1),
+            template_name TEXT DEFAULT 'classic',
+            heading TEXT DEFAULT 'Everything We Serve',
+            subheading TEXT DEFAULT 'From Coastal Delicacies to Naati Style Biryani — all made fresh every evening.',
+            cta_text TEXT DEFAULT 'Order Now',
+            sticker TEXT DEFAULT 'none',
+            image_url TEXT DEFAULT '/static/images/menu_poster.jpg',
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
     ''')
 
     from werkzeug.security import generate_password_hash
-    c.execute("SELECT * FROM admins WHERE username='admin'")
+    admin_username = app.config.get('ADMIN_USERNAME', 'admin')
+    admin_password = app.config.get('ADMIN_PASSWORD', 'admin123')
+    c.execute('SELECT * FROM admins WHERE username=?', (admin_username,))
     if not c.fetchone():
         c.execute("INSERT INTO admins (username, password_hash) VALUES (?,?)",
-                  ('admin', generate_password_hash('admin123')))
+                  (admin_username, generate_password_hash(admin_password)))
+    c.execute("SELECT setting_id FROM payment_settings WHERE setting_id=1")
+    if not c.fetchone():
+        c.execute("""INSERT INTO payment_settings
+            (setting_id, upi_id, bank_name, account_holder, account_number, ifsc_code)
+            VALUES (1, '', '', '', '', '')""")
+    c.execute("SELECT setting_id FROM poster_settings WHERE setting_id=1")
+    if not c.fetchone():
+        c.execute("""INSERT INTO poster_settings
+            (setting_id, template_name, heading, subheading, cta_text, sticker, image_url)
+            VALUES (1, 'classic', 'Everything We Serve',
+            'From Coastal Delicacies to Naati Style Biryani — all made fresh every evening.',
+            'Order Now', 'none', '/static/images/menu_poster.jpg')""")
 
     c.execute("SELECT COUNT(*) FROM menu_items")
     if c.fetchone()[0] == 0:
@@ -153,6 +196,17 @@ def init_db(app):
             VALUES (?,?,?,?,?,?,?,?,?,?,?)
         ''', items)
 
+    _migrate_users_oauth(c)
+
     conn.commit()
     conn.close()
     print("✅ Biryani on Wheels DB initialized")
+
+
+def _migrate_users_oauth(c):
+    cols = [row[1] for row in c.execute("PRAGMA table_info(users)")]
+    if 'google_sub' not in cols:
+        c.execute("ALTER TABLE users ADD COLUMN google_sub TEXT")
+    c.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google_sub ON users(google_sub) WHERE google_sub IS NOT NULL"
+    )

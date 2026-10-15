@@ -36,10 +36,34 @@ def place_order():
                        (oid, item['item_id'], item['quantity'], item['price'], item['size']))
         points = int(total / 10)
         db.execute("UPDATE users SET loyalty_points=loyalty_points+? WHERE user_id=?", (points, uid))
+        if d.get('payment_method') in ('UPI', 'Credit/Debit Card'):
+            db.execute(
+                """INSERT INTO admin_notifications (title, message, order_id, amount, payment_method)
+                   VALUES (?,?,?,?,?)""",
+                (
+                    'Payment received',
+                    f"Order #{oid} paid via {d.get('payment_method')} - Amount: Rs {total:.2f}",
+                    oid,
+                    total,
+                    d.get('payment_method')
+                )
+            )
         db.execute("DELETE FROM cart WHERE user_id=?", (uid,))
         db.commit()
         return jsonify({'success': True, 'order_id': oid, 'total': total, 'points_earned': points})
     finally: db.close()
+
+@orders_bp.route('/payment-settings')
+def payment_settings():
+    db = get_db(current_app)
+    try:
+        s = db.execute("""SELECT upi_id, bank_name, account_holder, account_number, ifsc_code
+                          FROM payment_settings WHERE setting_id=1""").fetchone()
+        if not s:
+            return jsonify({'upi_id': '', 'bank_name': '', 'account_holder': '', 'account_number': '', 'ifsc_code': ''})
+        return jsonify(dict(s))
+    finally:
+        db.close()
 
 @orders_bp.route('/orders')
 def get_orders():

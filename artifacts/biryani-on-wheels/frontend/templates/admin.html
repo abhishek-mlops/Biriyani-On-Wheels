@@ -1,33 +1,21 @@
-{% extends "base.html" %}{% block title %}Admin — Biryani on Wheels{% endblock %}{% block content %}
+{% extends "base.html" %}{% block title %}Dashboard — Biryani on Wheels{% endblock %}{% block content %}
 <div class="admin-page">
 
-  <!-- LOGIN -->
-  <div class="admin-login-wrap" id="admin-login-wrap" style="background: linear-gradient(135deg, rgba(245,166,35,0.08) 0%, rgba(12,12,12,0.7) 100%), url('/static/images/admin_bg.webp') center/cover no-repeat fixed;">
-    <div class="admin-login-box">
-      <img src="/static/images/logo_circle.jpg" alt="BOW" class="logo-img" onerror="this.style.display='none'">
-      <h2>Admin Panel</h2>
-      <div class="form-grp"><input type="text" id="a-user" placeholder="Username"></div>
-      <div class="form-grp"><input type="password" id="a-pass" placeholder="Password"></div>
-      <button class="btn-saffron w-100" style="width:100%" onclick="adminLogin()">Login</button>
-      <div class="admin-hint">Default: admin / admin123</div>
-      <div class="auth-error" id="a-err"></div>
-    </div>
-  </div>
-
   <!-- DASHBOARD -->
-  <div class="admin-wrap" id="admin-wrap" style="display:none">
+  <div class="admin-wrap" id="admin-wrap">
     <div class="admin-side">
       <div class="admin-side-brand">
         <img src="/static/images/logo_circle.jpg" onerror="this.style.display='none'">
-        <h3>BOW Admin</h3>
+        <h3>BOW</h3>
         <p>Biryani on Wheels</p>
       </div>
       <nav class="admin-nav">
         <button class="anav-btn active" onclick="showTab('overview')">📊 Overview</button>
         <button class="anav-btn" onclick="showTab('orders')">📦 Orders</button>
+        <button class="anav-btn" onclick="showTab('payments')">💳 Payments</button>
         <button class="anav-btn" onclick="showTab('menu')">🍽️ Menu</button>
         <button class="anav-btn" onclick="showTab('offers')">🎁 Offers</button>
-        <button class="anav-btn" onclick="showTab('templates')">📧 Templates</button>
+        <button class="anav-btn" onclick="showTab('poster')">🖼️ Poster</button>
         <button class="anav-btn" onclick="showTab('analytics')">📈 Analytics</button>
       </nav>
       <button class="admin-logout" onclick="adminLogout()">Logout</button>
@@ -57,6 +45,29 @@
         <div id="a-orders"></div>
       </div>
 
+      <!-- PAYMENTS -->
+      <div class="atab" id="atab-payments" style="display:none">
+        <h2 class="admin-tab-title">Payment Settings & Notifications</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+          <div style="padding:1rem;border:1px solid var(--border);border-radius:12px;background:rgba(12,12,12,0.3)">
+            <h3 style="font-size:0.9rem;margin-bottom:0.9rem;color:var(--muted)">Receive Payments</h3>
+            <div class="form-grp"><label>UPI ID</label><input type="text" id="p-upi" placeholder="example@upi"></div>
+            <div class="form-grp"><label>Bank Name</label><input type="text" id="p-bank" placeholder="State Bank of India"></div>
+            <div class="form-grp"><label>Account Holder</label><input type="text" id="p-holder" placeholder="Name"></div>
+            <div class="form-grp"><label>Account Number</label><input type="text" id="p-account" placeholder="XXXXXXXXXX"></div>
+            <div class="form-grp"><label>IFSC Code</label><input type="text" id="p-ifsc" placeholder="SBIN0000000"></div>
+            <button class="btn-saffron" onclick="savePaymentSettings()">Save Payment Details</button>
+          </div>
+          <div style="padding:1rem;border:1px solid var(--border);border-radius:12px;background:rgba(12,12,12,0.3)">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:0.8rem;margin-bottom:0.9rem">
+              <h3 style="font-size:0.9rem;color:var(--muted)">Payment Notifications</h3>
+              <button class="btn-ghost" onclick="markNotificationsRead()">Mark all read</button>
+            </div>
+            <div id="payment-notifications" style="max-height:420px;overflow:auto"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- MENU -->
       <div class="atab" id="atab-menu" style="display:none">
         <h2 class="admin-tab-title">Menu Management</h2>
@@ -79,13 +90,12 @@
         </div>
       </div>
 
-      <!-- TEMPLATES -->
-      <div class="atab" id="atab-templates" style="display:none">
-        <h2 class="admin-tab-title">Email Templates</h2>
-        <button class="btn-saffron" style="margin-bottom:1.5rem" onclick="openTemplateModal()">+ New Template</button>
-        <div style="padding:2rem;text-align:center;color:var(--muted)">
-          <p>📧 Email template management coming soon...</p>
-        </div>
+      <!-- POSTER -->
+      <div class="atab" id="atab-poster" style="display:none">
+        <h2 class="admin-tab-title">Poster Studio</h2>
+        <p style="color:var(--muted);margin-bottom:1rem">Create and post homepage poster content like a mini Canva editor.</p>
+        <button class="btn-saffron" style="margin-bottom:1.5rem" onclick="openPosterEditor()">Customize This Template</button>
+        <div id="poster-preview" style="padding:1rem;border:1px solid var(--border);border-radius:12px;color:var(--muted)">No preview loaded yet.</div>
       </div>
     </div>
   </div>
@@ -134,6 +144,53 @@
     <div class="modal-ftr">
       <button class="btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn-saffron" onclick="saveItem()">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- POSTER EDITOR -->
+<div class="modal-bg" id="poster-editor-modal" style="display:none">
+  <div class="modal-box" style="max-width:1080px;width:95%">
+    <div class="modal-hdr">
+      <h3>Poster Editor</h3>
+      <button onclick="closePosterEditor()">✕</button>
+    </div>
+    <div class="modal-body" style="display:grid;grid-template-columns:240px 1fr;gap:1rem">
+      <div style="border:1px solid var(--border);border-radius:10px;padding:0.8rem">
+        <button class="btn-ghost" style="width:100%;margin-bottom:0.4rem" onclick="switchPosterTool('templates')">Templates</button>
+        <button class="btn-ghost" style="width:100%;margin-bottom:0.4rem" onclick="switchPosterTool('stickers')">Stickers</button>
+        <button class="btn-ghost" style="width:100%;margin-bottom:0.4rem" onclick="switchPosterTool('import')">Import</button>
+        <button class="btn-ghost" style="width:100%;margin-bottom:0.4rem" onclick="downloadPosterSettings()">Download</button>
+        <button class="btn-saffron" style="width:100%" onclick="postPosterSettings()">Post</button>
+      </div>
+      <div>
+        <div id="poster-tool-templates" class="poster-tool">
+          <div class="form-grp"><label>Template</label>
+            <select id="poster-template">
+              <option value="classic">Classic</option>
+              <option value="dark">Dark</option>
+              <option value="spicy">Spicy</option>
+            </select>
+          </div>
+        </div>
+        <div id="poster-tool-stickers" class="poster-tool" style="display:none">
+          <div class="form-grp"><label>Sticker</label>
+            <select id="poster-sticker">
+              <option value="none">None</option>
+              <option value="🔥">🔥</option>
+              <option value="⭐">⭐</option>
+              <option value="🥘">🥘</option>
+              <option value="🚚">🚚</option>
+            </select>
+          </div>
+        </div>
+        <div id="poster-tool-import" class="poster-tool" style="display:none">
+          <div class="form-grp"><label>Poster Image URL</label><input type="text" id="poster-image-url" placeholder="/static/images/menu_poster.jpg"></div>
+        </div>
+        <div class="form-grp"><label>Heading</label><input type="text" id="poster-heading"></div>
+        <div class="form-grp"><label>Subheading</label><textarea id="poster-subheading" rows="2"></textarea></div>
+        <div class="form-grp"><label>Button Text</label><input type="text" id="poster-cta"></div>
+      </div>
     </div>
   </div>
 </div>

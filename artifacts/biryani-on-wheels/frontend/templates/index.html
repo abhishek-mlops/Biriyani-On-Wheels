@@ -101,14 +101,14 @@
 <!-- ═══ MENU POSTER ═══ -->
 <section class="poster-section home-sec-alt">
   <div class="container">
-    <div class="poster-card">
-      <img src="/static/images/menu_poster.jpg" alt="Biryani on Wheels Menu" onerror="this.style.opacity='0.5'">
+    <div class="poster-card" id="home-poster-card">
+      <img id="home-poster-image" src="/static/images/menu_poster.jpg" alt="Biryani on Wheels Menu" onerror="this.style.opacity='0.5'">
       <div class="poster-overlay">
         <div class="poster-text">
-          <div class="sec-tag" style="margin-bottom:0.8rem">📋 Our Menu</div>
-          <h2>Everything We <span style="color:var(--saffron)">Serve</span></h2>
-          <p>From Coastal Delicacies to Naati Style Biryani — all made fresh every evening.</p>
-          <a href="/menu-page" class="btn-saffron" onclick="goTo(event,'/menu-page')">Order Now</a>
+          <div class="sec-tag" id="home-poster-tag" style="margin-bottom:0.8rem">📋 Our Menu</div>
+          <h2 id="home-poster-heading">Everything We <span style="color:var(--saffron)">Serve</span></h2>
+          <p id="home-poster-subheading">From Coastal Delicacies to Naati Style Biryani — all made fresh every evening.</p>
+          <a href="/menu-page" id="home-poster-cta" class="btn-saffron" onclick="goTo(event,'/menu-page')">Order Now</a>
         </div>
       </div>
     </div>

@@ -1,21 +1,9 @@
 from flask import Blueprint, request, jsonify, session, current_app
-from werkzeug.security import check_password_hash
 from backend.models.database import get_db
 
 admin_bp = Blueprint('admin', __name__)
 
 def req_admin(): return bool(session.get('admin_id'))
-
-@admin_bp.route('/admin/login', methods=['POST'])
-def login():
-    d = request.get_json()
-    db = get_db(current_app)
-    try:
-        a = db.execute("SELECT * FROM admins WHERE username=?", (d.get('username'),)).fetchone()
-        if a and check_password_hash(a['password_hash'], d.get('password','')):
-            session['admin_id'] = a['admin_id']; return jsonify({'success': True})
-        return jsonify({'error': 'Invalid credentials'}), 401
-    finally: db.close()
 
 @admin_bp.route('/admin/logout', methods=['POST'])
 def logout():
@@ -111,3 +99,97 @@ def analytics():
             JOIN menu_items m ON oi.item_id=m.item_id GROUP BY oi.item_id ORDER BY total DESC LIMIT 10""").fetchall()
         return jsonify({'daily_sales': [dict(d) for d in daily], 'top_dishes': [dict(d) for d in top]})
     finally: db.close()
+
+@admin_bp.route('/admin/payment-settings')
+def get_payment_settings():
+    if not req_admin(): return jsonify({'error': 'Unauthorized'}), 403
+    db = get_db(current_app)
+    try:
+        s = db.execute("""SELECT upi_id, bank_name, account_holder, account_number, ifsc_code, updated_at
+                          FROM payment_settings WHERE setting_id=1""").fetchone()
+        if not s:
+            return jsonify({'upi_id': '', 'bank_name': '', 'account_holder': '', 'account_number': '', 'ifsc_code': '', 'updated_at': None})
+        return jsonify(dict(s))
+    finally:
+        db.close()
+
+@admin_bp.route('/admin/payment-settings', methods=['PUT'])
+def update_payment_settings():
+    if not req_admin(): return jsonify({'error': 'Unauthorized'}), 403
+    d = request.get_json()
+    db = get_db(current_app)
+    try:
+        db.execute("""UPDATE payment_settings
+                      SET upi_id=?, bank_name=?, account_holder=?, account_number=?, ifsc_code=?,
+                          updated_at=CURRENT_TIMESTAMP
+                      WHERE setting_id=1""",
+                   (d.get('upi_id','').strip(), d.get('bank_name','').strip(), d.get('account_holder','').strip(),
+                    d.get('account_number','').strip(), d.get('ifsc_code','').strip()))
+        db.commit()
+        return jsonify({'success': True})
+    finally:
+        db.close()
+
+@admin_bp.route('/admin/payment-notifications')
+def payment_notifications():
+    if not req_admin(): return jsonify({'error': 'Unauthorized'}), 403
+    db = get_db(current_app)
+    try:
+        rows = db.execute("""SELECT notification_id, title, message, order_id, amount, payment_method, is_read, created_at
+                             FROM admin_notifications ORDER BY created_at DESC LIMIT 50""").fetchall()
+        return jsonify([dict(r) for r in rows])
+    finally:
+        db.close()
+
+@admin_bp.route('/admin/payment-notifications/read', methods=['PUT'])
+def mark_notifications_read():
+    if not req_admin(): return jsonify({'error': 'Unauthorized'}), 403
+    db = get_db(current_app)
+    try:
+        db.execute("UPDATE admin_notifications SET is_read=1 WHERE is_read=0")
+        db.commit()
+        return jsonify({'success': True})
+    finally:
+        db.close()
+
+@admin_bp.route('/admin/poster-settings')
+def get_poster_settings_admin():
+    if not req_admin(): return jsonify({'error': 'Unauthorized'}), 403
+    db = get_db(current_app)
+    try:
+        s = db.execute("""SELECT template_name, heading, subheading, cta_text, sticker, image_url, updated_at
+                          FROM poster_settings WHERE setting_id=1""").fetchone()
+        if s:
+            return jsonify(dict(s))
+        return jsonify({'error': 'Poster settings missing'}), 404
+    finally:
+        db.close()
+
+@admin_bp.route('/admin/poster-settings', methods=['PUT'])
+def update_poster_settings():
+    if not req_admin(): return jsonify({'error': 'Unauthorized'}), 403
+    d = request.get_json()
+    db = get_db(current_app)
+    try:
+        db.execute("""UPDATE poster_settings
+                      SET template_name=?, heading=?, subheading=?, cta_text=?, sticker=?, image_url=?, updated_at=CURRENT_TIMESTAMP
+                      WHERE setting_id=1""",
+                   (d.get('template_name', 'classic').strip(), d.get('heading', '').strip(),
+                    d.get('subheading', '').strip(), d.get('cta_text', 'Order Now').strip(),
+                    d.get('sticker', 'none').strip(), d.get('image_url', '/static/images/menu_poster.jpg').strip()))
+        db.commit()
+        return jsonify({'success': True})
+    finally:
+        db.close()
+
+@admin_bp.route('/poster-settings')
+def get_poster_settings_public():
+    db = get_db(current_app)
+    try:
+        s = db.execute("""SELECT template_name, heading, subheading, cta_text, sticker, image_url
+                          FROM poster_settings WHERE setting_id=1""").fetchone()
+        if s:
+            return jsonify(dict(s))
+        return jsonify({'error': 'Poster settings missing'}), 404
+    finally:
+        db.close()
